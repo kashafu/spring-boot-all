@@ -51,16 +51,4 @@ public class UserController {
         }
     }
 
-
-    @GetMapping("/search/deleteByUsername")
-    public ResponseEntity<String> deleteByUsername(@RequestParam("username") String username) {
-
-        boolean deleted = userService.deleteByUsername(username);
-
-        if (deleted) {
-            return ResponseEntity.ok("user: '" + username + "' is successfully deleted.");
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 }
