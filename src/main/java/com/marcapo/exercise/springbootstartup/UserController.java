@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/user/users")
 public class UserController {
     private final UserService userService;
 
@@ -52,7 +52,7 @@ public class UserController {
     }
 
 
-    @DeleteMapping("/search/deleteByUsername")
+    @GetMapping("/search/deleteByUsername")
     public ResponseEntity<String> deleteByUsername(@RequestParam("username") String username) {
 
         boolean deleted = userService.deleteByUsername(username);

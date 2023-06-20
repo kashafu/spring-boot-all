@@ -18,6 +18,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+	implementation 'commons-codec:commons-codec:1.15'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

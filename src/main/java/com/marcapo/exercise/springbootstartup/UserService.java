@@ -34,7 +34,7 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
     public User createUser(User user) {
-        user.setPassword(Utils.md5Hash(user.getPassword()));
+//        user.setPassword(Utils.encryptPassword(user.getPassword()));
         return userRepository.save(user);
     }
 

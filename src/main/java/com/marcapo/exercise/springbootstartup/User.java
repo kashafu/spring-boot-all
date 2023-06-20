@@ -31,11 +31,10 @@ public class User {
     }
 
     public String getPassword() {
-        return Utils.md5Hash(this.password);
+        return password;
     }
 
     public void setPassword(String password) {
-        this.password = Utils.md5Hash(password);
+        this.password = Utils.encryptPassword(password);
     }
-
 }
