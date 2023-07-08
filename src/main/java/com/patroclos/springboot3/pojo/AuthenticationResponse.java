@@ -1,5 +1,8 @@
 package com.patroclos.springboot3.pojo;
 
+import lombok.Builder;
+
+@Builder
 public class AuthenticationResponse {
 
 	private String token;

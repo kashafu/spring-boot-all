@@ -10,14 +10,20 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @Service
 public class JwtService {
+  @Value("${app.jwtSecret}")
+  private String jwtSecret;
 
-  private static final String SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
+  @Value("${app.jwtExpirationMs}")
+  private int jwtExpirationMs;
 
   public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);
@@ -32,6 +38,20 @@ public class JwtService {
     return generateToken(new HashMap<>(), userDetails);
   }
 
+  public String generateJwtToken(Authentication authentication) {
+
+    UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+
+    return Jwts.builder()
+            .setSubject((userPrincipal.getUsername()))
+            .setIssuedAt(new Date())
+            .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+            .signWith(key(), SignatureAlgorithm.HS256)
+            .compact();
+  }
+  private Key key() {
+    return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+  }
   public String generateToken(
       Map<String, Object> extraClaims,
       UserDetails userDetails
@@ -42,7 +62,7 @@ public class JwtService {
         .setSubject(userDetails.getUsername())
         .setIssuedAt(new Date(System.currentTimeMillis()))
         .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
-        .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+        .signWith(key(), SignatureAlgorithm.HS256)
         .compact();
   }
 
@@ -62,14 +82,10 @@ public class JwtService {
   private Claims extractAllClaims(String token) {
     return Jwts
         .parserBuilder()
-        .setSigningKey(getSignInKey())
+        .setSigningKey(key())
         .build()
         .parseClaimsJws(token)
         .getBody();
   }
 
-  private Key getSignInKey() {
-    byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-    return Keys.hmacShaKeyFor(keyBytes);
-  }
 }

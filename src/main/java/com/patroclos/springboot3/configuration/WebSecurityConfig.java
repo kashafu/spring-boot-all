@@ -31,7 +31,7 @@ public class WebSecurityConfig {
 
 	//@Autowired
 	//private JwtAuthenticationFilter jwtAuthenticationFilter;	
-	public final static String[] PUBLIC_REQUEST_MATCHERS = { "/api/v1/auth/**", "/api-docs/**", "/swagger-ui/**" };
+	public final static String[] PUBLIC_REQUEST_MATCHERS = {"/api/v1/user/**", "/api/v1/auth/**", "/api-docs/**", "/swagger-ui/**" };
 
 	@Bean
 	@Order(1000)
@@ -55,23 +55,6 @@ public class WebSecurityConfig {
 		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
 		return http.build();
-	}
-
-	@Bean
-	public UserDetailsService users() {
-		// The builder will ensure the passwords are encoded before saving in memory
-		UserBuilder users = User.builder();
-		UserDetails user = users
-				.username("user")
-				.password(passwordEncoder().encode("password"))
-				.roles("USER")
-				.build();
-		UserDetails admin = users
-				.username("admin")
-				.password(passwordEncoder().encode("password"))
-				.roles("USER", "ADMIN")
-				.build();
-		return new InMemoryUserDetailsManager(user, admin);
 	}
 
 	@Bean

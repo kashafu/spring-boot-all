@@ -3,6 +3,8 @@ package com.patroclos.springboot3.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
@@ -20,17 +22,13 @@ public class AuthenticationService {
 	private UserDetailsService userDetailsService;
 
 	public AuthenticationResponse authenticate(AuthenticationRequest request) {
-		authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(
-						request.getEmail(),
-						request.getPassword()
-						)
-				);
 
-		var user = userDetailsService.loadUserByUsername(request.getEmail());
-		var jwtToken = jwtService.generateToken(user);
-		var response =  new AuthenticationResponse();
-		response.setToken(jwtToken);
-		return response;
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		String jwtToken = jwtService.generateJwtToken(authentication);
+
+		return AuthenticationResponse.builder().token(jwtToken).build();
 	}
 }
